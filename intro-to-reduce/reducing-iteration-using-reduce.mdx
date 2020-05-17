@@ -1,0 +1,211 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark
+
+### Reducing Iteration Using Reduce
+
+---
+
+<CodeSurfer>
+
+```js
+
+import { isEven, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .filter(isEven)
+  .map(addOne)
+
+```
+
+```diff title="Problem: we create a new array each time"
+```
+
+```diff title="Problem: we are iterating twice"
+```
+
+```diff title="What if the array were larger?"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js
+
+import { isOdd, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .reduce(
+    (numbers, number) => isOdd(number) ? numbers : numbers.concat(addOne(number)),
+    []
+  )
+
+```
+
+```diff 2 title="Import our functions"
+```
+
+```diff 4 title="We have our array"
+```
+
+```diff 5,8 title="Let's call reduce!"
+```
+
+```diff 7 title="Our accumulator is an empty array"
+```
+
+```diff 6[52:81],7 title="Empty arrays have no effect under addition"
+```
+
+```diff 6 title="Let's think about our reducing function"
+```
+
+``` diff 6[5:21] title="We have our accumulator and current number in the array"
+```
+
+```diff 6[23:81] title="Remember, we need to return a new accumulator"
+```
+
+```diff 6[26:38] title="First, is the current number is odd?"
+```
+
+```diff 6[40:48] title="If so, let's return the accumulator, skipping this number"
+```
+
+```diff 6[67:80] title="If it's an even number we will first transform it by adding one"
+```
+
+```diff 6[52:81] title="Then we'll add it to the accumulator and return it"
+```
+
+```diff 6[52:81] title="Problem: concat will produce a new array"
+```
+
+```diff 6[52:81] title="So if you don't want that overhead, you can use push instead"
+```
+
+
+```js title="But it's slightly different"
+
+import { isOdd, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .reduce(
+    (numbers, number) => isOdd(number) ? numbers : (numbers.push(addOne(number)) && numbers),
+    []
+  )
+
+```
+
+```diff 6[53:80] title="The push operation returns the new length which will be non-zero"
+```
+
+```diff 6[82:91] title="We can combine this with && to return the right operand (our accumulator)"
+```
+
+```diff title="This happens for every item in the array, building up our accumulator"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurferColumns themes={[github]} sizes={[5,8]}>
+
+<Step>
+
+```js title="Easier To Read"
+
+import { isEven, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .filter(isEven)
+  .map(addOne)
+
+```
+
+```js title="Optimization: Handles large amounts of data more efficiently!"
+
+import { isOdd, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .reduce(
+    (numbers, number) => isOdd(number) ? numbers : (numbers.push(addOne(number)) && numbers),
+    []
+  )
+
+```
+
+</Step>
+
+<Step>
+
+```js title="Easier To Read"
+
+import { isEven, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .filter(isEven)
+  .map(addOne)
+
+```
+
+```js title="Optimization: We only create one intermediate array!"
+
+import { isOdd, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .reduce(
+    (numbers, number) => isOdd(number) ? numbers : (numbers.push(addOne(number)) && numbers),
+    []
+  )
+
+```
+
+</Step>
+
+<Step>
+
+```js title="Easier To Read"
+
+import { isEven, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .filter(isEven)
+  .map(addOne)
+
+```
+
+```js title="Optimization: We iterate only once!"
+
+import { isOdd, addOne } from './somemathfile'
+
+[1,2,3,4]
+  .reduce(
+    (numbers, number) => isOdd(number) ? numbers : (numbers.push(addOne(number)) && numbers),
+    []
+  )
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+### This is just one example. Can you think of another?
+
+---
+
+### And that's it!
+
+---

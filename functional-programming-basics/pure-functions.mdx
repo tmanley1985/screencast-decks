@@ -1,0 +1,83 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+
+# Pure Functions
+
+---
+
+## Given the same input, you get the same output
+
+---
+
+## No Side Effects
+
+---
+
+## What Are Side Effects?
+
+---
+
+## Side effects are anything that could conceivably cause the output to be different
+
+---
+
+## A bit nebulous I know...
+
+---
+
+## Here are certain examples
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Interacting with a variable outside of the function's scope</li>
+  <li>Logging</li>
+  <li>Randomness</li>
+</div>
+
+---
+
+## The problem is the world (state) can shift underneath your feet.
+
+---
+
+## Everything needs to be input to the function
+
+---
+
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Notice the output changes even don't change the input"
+
+let a = 3
+
+const addOne = () => a + 1
+
+addOne() // 4
+
+a = 4
+
+addOne() // 5
+
+```
+
+```js title="Same output for same input"
+
+const addOne = x => x + 1
+
+addOne(3) // 4
+
+```
+
+</Step>
+
+</CodeSurferColumns>

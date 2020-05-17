@@ -1,0 +1,286 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+## Reverse Print Using Recursion
+
+---
+
+### Prerequisites
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>You've watched Intro To Recursion</li>
+  <li>And that's it!</li>
+</div>
+
+---
+
+### The Problem
+
+Print the elements in an array in reverse using recursion
+
+---
+
+### A slightly easier problem
+
+Print the elements of an array using recursion... in order
+
+---
+
+<CodeSurfer>
+
+```js title="B.A.R"
+
+const printElements = arr => {
+  // Base Case
+
+  // Action
+
+  // Recursion
+}
+
+printElements([1,2,3])
+```
+
+```js title="Forget the base case for a second"
+
+const printElements = arr => {
+  // Base Case
+
+  // Action
+
+  // Recursion
+}
+
+printElements([1,2,3])
+```
+
+```js title="What is the action? What is the purpose of the function?"
+
+const printElements = arr => {
+  // Base Case
+
+  // Action
+
+  // Recursion
+}
+
+printElements([1,2,3])
+```
+
+```js title="To log!"
+
+const printElements = arr => {
+  // Base Case
+
+  // Action
+  console.log(arr[0])
+  // Recursion
+}
+
+printElements([1,2,3])
+```
+
+```js 8 subtitle="Recursion + Different Arguments" title="How do we move through the array?"
+
+const printElements = arr => {
+  // Base Case
+
+  // Action
+  console.log(arr[0])
+  // Recursion
+  printElements(arr.slice(1))
+}
+
+printElements([1,2,3])
+```
+
+```js 2[23:25],4,5 title="Our base case is determined by the arguments"
+
+const printElements = arr => {
+  // Base Case
+  if (arr.length === 0)
+    return
+
+  // Action
+  console.log(arr[0])
+  // Recursion
+  printElements(arr.slice(1))
+}
+
+printElements([1,2,3])
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Mental Model: Functions Are Boxes"
+const printElements = arr => {
+  // Base Case
+  if (arr.length === 0)
+    return
+
+  // Action
+  console.log(arr[0])
+  // Recursion
+  printElements(arr.slice(1))
+}
+
+printElements([1,2,3])
+```
+
+```js subtitle="Recursion: Stacking Boxes" file="./stack-visuals/fourth.js"
+```
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<CodeSurfer>
+
+
+```js file="./stack-visuals/first.js"
+```
+
+```js file="./stack-visuals/second.js"
+```
+
+```js file="./stack-visuals/third.js"
+```
+
+```js file="./stack-visuals/fourth.js"
+```
+
+```js file="./stack-visuals/third.js"
+```
+
+```js file="./stack-visuals/second.js"
+```
+
+```js file="./stack-visuals/first.js"
+```
+
+</CodeSurfer>
+
+---
+
+### So how do we reverse this process?
+
+---
+
+### We'll focus on one way. It takes one change.
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js showNumbers
+const printElements = arr => {
+  // Base Case
+  if (arr.length === 0)
+    return
+
+  // Action
+  console.log(arr[0])
+
+  // Recursion
+  printElements(arr.slice(1))
+}
+```
+
+```js showNumbers
+const printElementsReverse = arr => {
+  // Base Case
+  if (arr.length === 0)
+    return
+
+  // Recursion
+  printElementsReverse(arr.slice(1))
+
+  // Action
+  console.log(arr[0])
+}
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+
+<CodeSurfer>
+
+
+```js file="./stack-visuals/reverse/first.js"
+```
+
+```js file="./stack-visuals/reverse/second.js"
+```
+
+```js file="./stack-visuals/reverse/third.js"
+```
+
+```js file="./stack-visuals/reverse/fourth.js"
+```
+
+```js file="./stack-visuals/reverse/third.js"
+```
+
+```js file="./stack-visuals/reverse/second.js"
+```
+
+```js file="./stack-visuals/reverse/first.js"
+
+```
+
+</CodeSurfer>
+
+---
+
+### Don't be afraid to struggle with that idea!
+
+---
+
+#### Try to think of an analogy and teach it to someone else
+
+---
+
+<CodeSurfer>
+
+```js title="Mental Model: Winding/Unwinding"
+const printElementsReverse = arr => {
+  // Base Case
+  if (arr.length === 0)
+    return
+
+  // Recursion
+  printElementsReverse(arr.slice(1))
+
+   // Action
+  console.log(arr[0])
+}
+
+printElementsReverse([1,2,3])
+```
+
+</CodeSurfer>
+
+---
+
+## That's it!

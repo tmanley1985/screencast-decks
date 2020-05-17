@@ -1,0 +1,119 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+### Currying and Partial Application
+
+---
+
+### Prerequisites
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>And that's it!</li>
+</div>
+
+---
+
+### What is a curried function?
+
+---
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+It's a function with multiple parameters, that is split into smaller, unary (single parameter) functions
+</div>
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Uncurried"
+
+const getProp = (prop, obj) => obj[prop]
+
+getProp('id', {id: 2}) // 2
+
+```
+
+```js title="Curried"
+
+const getProp = prop => obj => obj[prop]
+
+const getId = getProp('id') // obj => obj['id']
+
+getId({id: 2})
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<CodeSurfer>
+
+
+```js 2[17:27] title="Fuzzy To Specific"
+
+const getProp = prop => obj => obj[prop]
+
+const getId = getProp('id') // obj => obj['id']
+const getName = getProp('name') // obj => obj['name']
+
+getId({id: 2})
+
+```
+
+```diff 4,5 title="Create New Functions"
+```
+
+```diff 2[17:20],4[15:27],5[17:31] title="Partial Application"
+```
+
+```diff 2 title="Mental Model: It's Just One Function"
+```
+
+</CodeSurfer>
+
+---
+
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Verbose"
+
+function getProp(prop) {
+  function _getProp(obj) {
+    return obj[prop]
+  }
+
+  return _getProp
+}
+
+```
+
+```js title="Less Verbose"
+
+const getProp = prop => obj => obj[prop]
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+## That's it!

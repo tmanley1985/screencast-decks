@@ -21,3 +21,7 @@ npm run build
 ```
 
 For more documentation see [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](https://codesurfer.pomb.us/)
+
+## Using Decks
+
+Update the npm start command to point to the deck you wish to present.

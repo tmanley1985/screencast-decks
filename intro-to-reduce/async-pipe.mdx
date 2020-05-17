@@ -1,0 +1,232 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+#### Create An Async Pipeline Using Reduce
+
+---
+
+### Prerequisites
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>You understand how promises work</li>
+  <li>You've been following along or understand reduce already</li>
+  <li>And that's it!</li>
+</div>
+
+---
+
+### What is a pipeline?
+
+---
+
+### Important!
+
+The <span style={{color: "#FEBE9C"}}><strong>output</strong></span> of one function can be the <span style={{color: "#FEBE9C"}}><strong>input</strong></span> to another!
+
+---
+
+### This is known as function <span style={{color: "#FEBE9C"}}><strong>composition</strong></span>
+
+---
+
+<CodeSurfer>
+
+```js
+
+import {addOne, minusOne} from './somemathfile'
+
+addOne(minusOne(2))
+
+```
+
+```diff 2
+```
+
+```diff 4
+```
+
+```js
+
+import {addOne, minusOne} from './somemathfile'
+
+addOne(1)
+
+```
+
+```js
+
+import {addOne, minusOne} from './somemathfile'
+
+2
+
+```
+
+```js title="Our first pipeline"
+
+import {addOne, minusOne} from './somemathfile'
+
+const minusOneAddOne = x => addOne(minusOne(x))
+
+minusOneAddOne(2) // 2
+```
+
+```diff 4 title="Create a function that composes other functions"
+```
+
+```diff 6 title="Call the pipeline"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+
+```js title="I Promise To Do All This"
+
+import {addOneAsync, minusOneAsync} from './somemathfile'
+
+const minusOneAddOneAsync = x => minusOneAsync(x).then(addOneAsync)
+
+minusOneAddOneAsync(2).then(console.log) // 2
+```
+
+```diff 2 title="Import the async functions"
+```
+
+```diff 4 title="Create the pipeline"
+```
+
+```diff 6 title="Call the new function"
+```
+
+</CodeSurfer>
+
+---
+
+#### How do we do this for any number of functions?
+
+---
+
+#### We should think of functions as lego blocks
+
+---
+
+### They should be small and composable
+
+---
+
+<CodeSurfer>
+
+```js title="A higher order function"
+
+const asyncPipe = (...asyncFns) => x => 
+    asyncFns.reduce(
+        (acc, currentAsyncFn) => acc.then(currentAsyncFn),
+        Promise.resolve(x)
+    )
+
+```
+
+```diff 2[19:32] title="Pass in any number of async functions"
+```
+
+```diff 2[36:36] title="That produces a new function that can be called later"
+```
+
+```diff 2[19:39] title="The benefit is reuse"
+```
+
+```diff 3 title="Let's reduce!"
+```
+
+```diff 5 title="Promise.resolve has no effect on the data"
+```
+
+```diff 4 title="Remember the job of the reducing function!"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js
+
+import {addOneAsync} from './somemathfile'
+
+const asyncPipe = (...asyncFns) => x => 
+    asyncFns.reduce(
+        (acc, currentPromise) => acc.then(currentPromise),
+        Promise.resolve(x)
+    )
+
+const addTwoAsync = asyncPipe(addOneAsync, addOneAsync)
+
+addTwoAsync(2).then(console.log)
+
+```
+
+```diff 2
+```
+
+```diff 4,4,5,6,7,8
+```
+
+```diff 10
+```
+
+```diff 4[19:31],10[21:55] title="Creating our new function"
+```
+
+```diff 4[36:36],12[1:14]
+```
+
+```diff 12[15:32]
+```
+
+</CodeSurfer>
+
+---
+
+### A <span style={{color: "#FEBE9C"}}><strong>kinda</strong></span> real life example
+
+---
+
+<CodeSurfer>
+
+```js
+
+import {getUser, sendEmail, sendInvoices, getOrdersForUser} from './some-service'
+import {asyncPipe} from './utils'
+
+const getUserSendEmail = asyncPipe(getUser, sendEmail)
+
+const sendInvoiceForUser = asyncPipe(getUser, getOrdersForUser, sendInvoices)
+
+```
+
+```diff 2
+```
+
+```diff 3
+```
+
+```diff 5,7 title="Reuse The Lego Blocks"
+```
+
+</CodeSurfer>
+
+---
+
+## That's it!

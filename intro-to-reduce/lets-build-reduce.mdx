@@ -1,0 +1,224 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+
+# Let's Build Reduce
+
+---
+
+<CodeSurfer>
+
+
+```js title="Let's look at how we use reduce already"
+
+[1,2,3].reduce((acc, val) => acc + val, 0)
+
+```
+
+```js 1[1:7] title="We need an array"
+[1,2,3].reduce((acc, val) => acc + val, 0)
+```
+
+```js 1[16:39] title="And a reducing function"
+[1,2,3].reduce((acc, val) => acc + val, 0)
+```
+
+```js 1[41:41] title="And an accumulator"
+[1,2,3].reduce((acc, val) => acc + val, 0)
+```
+
+```js title="We want something like this..."
+reduce((acc, val) => acc + val, 0, [1,2,3])
+```
+
+```js 1[19:25] title="With the option to accept more params"
+reduce((acc, val, i, arr) => acc + val, 0, [1,2,3])
+```
+
+```js 2,4 title="Let's compare the usage"
+
+[1,2,3].reduce((acc, val) => acc + val, 0)
+
+reduce((acc, val, i, arr) => acc + val, 0, [1,2,3])
+
+```
+
+```js title="Let's build it!"
+const reduce = (reducingFn, accumulator, arr) => {
+  // What should go in here?
+}
+```
+
+```js 2[3:29],4 title="First we need to iterate over the array"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+```js 3 title="Then we can build a NEW accumulator"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 3[19:56] title="That's the job of the reducing function"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 3[30:41] title="It takes the current accumulated value"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 2[16:20],3[43:47] title="And the current item we're iterating over"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 1[42:45],2[22:22],3[49:54] title="As well as the current index, and the array"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 3[5:16] title="And returns the new accumulator"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 6 title="After all that, we return the final accumulator"
+const reduce = (reducingFn, accumulator, arr) => {
+  arr.forEach((item, i) => {
+    accumulator = reducingFn(accumulator, item, i, arr)
+  })
+
+  return accumulator
+}
+```
+
+```js 1,5 title="Let's use it now"
+
+const add = (acc, val) => acc + val
+
+reduce(add, 0, [1,2,3,4])
+
+```
+
+```js 2,4[8:11] title="We have our reducing function"
+
+const add = (acc, val) => acc + val
+
+reduce(add, 0, [1,2,3,4])
+
+```
+
+```js 4[13:13] title="The initial value for our accumulator"
+
+const add = (acc, val) => acc + val
+
+reduce(add, 0, [1,2,3,4])
+
+```
+
+```js 4[16:24] title="And the array to reduce"
+
+const add = (acc, val) => acc + val
+
+reduce(add, 0, [1,2,3,4])
+
+```
+
+```js 4[27:31] title="And voila! We get our answer."
+
+const add = (acc, val) => acc + val
+
+reduce(add, 0, [1,2,3,4]) // 10
+
+```
+
+</CodeSurfer>
+
+---
+
+### We can also build this recursively
+
+<span style={{ opacity: "0.5"}}>But we'll do that in another video...</span>
+
+---
+
+### Some more examples
+
+---
+
+<CodeSurfer>
+
+```js 2 title="What about flattening arrays one level deep?"
+
+reduce((acc, arr) => acc.concat(arr), [], [[1,2], [3]]) // [1,2,3]
+
+reduce((acc, str) => `${acc} ${str}`, "", ["Hello", "world"]) // "Hello world"
+
+reduce((acc,val,i) => i % 2 === 0 ? acc.concat(val) : acc, [], [12,13,14]) // [12,13]
+```
+
+```js 4 title="How about smashing strings together?"
+
+reduce((acc, arr) => acc.concat(arr), [], [[1,2], [3]])
+
+reduce((acc, str) => `${acc} ${str}`, "", ["Hello", "world"])
+
+reduce((acc,val,i) => i % 2 === 0 ? acc.concat(val) : acc, [], [12,13,14]) // [12,13]
+```
+
+```js 6 title="How about keeping elements with an even index?"
+
+reduce((acc, arr) => acc.concat(arr), [], [[1,2], [3]])
+
+reduce((acc, str) => `${acc} ${str}`, "", ["Hello", "world"])
+
+reduce((acc,val,i) => i % 2 === 0 ? acc.concat(val) : acc, [], [12,13,14]) // [12,13]
+```
+
+</CodeSurfer>
+
+---
+
+#### And that's it!

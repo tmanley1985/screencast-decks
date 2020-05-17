@@ -1,0 +1,313 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+# Intro To Recursion
+
+---
+
+### What I will assume about you
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>You have a basic understanding of javascript syntax, especially es6</li>
+    <li style={{marginBottom: '15px'}}>You want to learn</li>
+    <li style={{marginBottom: '15px'}}>...and that's it</li>
+  </ul>
+</div>
+
+---
+
+### Definitions are tricky
+
+<div style={{ maxWidth: "80%"}}>Words can have multiple definitions depending on the context.
+I'm going to try to keep the definitions simple.</div>
+
+---
+
+#### Recursion is a function that calls itself... 🤔
+
+<div style={{fontSize: "16px"}}>There's a bit more to it than that because there's also Corecursion, Indirect and Direct Recursion, Trampolining, etc.</div>
+
+---
+
+### Why?
+
+---
+
+<div style={{ maxWidth: "80%"}}>
+  For problems that can be broken into sub problems that look the same, recursion can be a more elegant solution (it involves less steps)
+</div>
+
+---
+
+<CodeSurferColumns themes={[vsDark, github]}>
+
+<Step>
+
+```js subtitle="Recursive"
+const DFS = root => {
+  if (!root) {
+    return
+  }
+
+  console.log(root)
+  root.left && DFS(root.left)
+  root.right && DFS(root.right)
+}
+```
+
+```js subtitle="Iterative"
+const DFS = root => {
+
+    if (!root)
+        return
+
+    let stack = [root]
+
+    while (stack.length) {
+
+        const node = stack.shift()
+        console.log(node)
+        const children = [node.right, node.left]
+            
+        for (const child of children) {
+            if (child && !child.visited) {
+                child.visited = true
+                stack.unshift(child)
+            }
+        }
+
+    }
+
+}
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+### Why Not?
+
+---
+
+<div style={{ maxWidth: "80%"}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>There can be performance issues with recursion depending on your language of choice.</li>
+    <li style={{marginBottom: '15px'}}>Certain problems don't lend themselves to recursion</li>
+    <li style={{marginBottom: '15px'}}>Team dynamics</li>
+  </ul>
+</div>
+
+
+---
+
+<CodeSurfer>
+
+```js title="The simplest recursive function"
+
+const runForever = () => runForever()
+
+```
+
+```js 2[26:38] title="When called, runForever calls itself"
+
+const runForever = () => runForever()
+
+```
+
+```js title="When will this function terminate?"
+
+const runForever = () => runForever()
+
+```
+
+```js title="Theoretically never. Practically, it results in a stack overflow."
+
+const runForever = () => runForever()
+
+```
+
+```js 1,8 title="How can we tell runForever when to stop?"
+
+const runForever = () => {
+  if (someConditionIsTrue) {
+    return
+  }
+  return runForever()
+}
+
+```
+
+```js 3[7:25] title="We need some condition to know when to return"
+
+const runForever = () => {
+  if (someConditionIsTrue) {
+    return
+  }
+  return runForever()
+}
+
+```
+
+```js 2[21:30],3[7:16] title="Often, we need information passed into the function to determine that"
+
+const runForever = (shouldStop) => {
+  if (shouldStop) {
+    return
+  }
+  return runForever(shouldStop)
+}
+
+```
+
+```js 6[21:30] title="But remember, the function calls itself so it needs to pass that info along"
+
+const runForever = (shouldStop) => {
+  if (shouldStop) {
+    return
+  }
+  return runForever(shouldStop)
+}
+
+```
+
+```js title="Let's look at a slightly different example"
+
+const logNTimes = numTimesToLog => {
+
+  if (numTimesToLog === 0) {
+    return
+  }
+
+  console.log(numTimesToLog)
+
+  return logNTimes(numTimesToLog - 1)
+
+} 
+
+logNTimes(3)
+
+```
+
+```diff 2[19:31],14[11:12] title="This function will log 3 times... because we told it to"
+```
+
+```diff 4,5,6 title="It first checks to see if the parameter is zero which it is not, the first time"
+```
+```diff 4,5,6 title="This is also known as the Base Case. It says when the recursion should stop"
+```
+
+```diff 8 title="Then it will log the input"
+```
+```diff 8 title="Any code that isn't the Base Case or the Recursion is called the Action"
+```
+
+```diff 10 title="Then it will call itself. But notice it decrements the input so that it does not run forever"
+```
+
+```diff 10 title="The function calling itself is the Recursion"
+```
+
+```diff 10 title="Note that we are returning the result of the recursion. When we return the result of a recursive call, we are in what is known as the tail position."
+```
+
+```diff 10 title="That is not always necessary for recursive functions and we will discuss that in a future video"
+```
+
+```diff 4,5,6 title="Eventually, it will call itself with zero and the recursion will terminate"
+```
+
+```html
+Basecase
+Action
+Recursion
+```
+
+```html 1[1:1],2[1:1],3[1:1] title="The acronym BAR"
+Basecase
+Action
+Recursion
+```
+
+```js title="One more example..."
+
+const add = (nums, acc = 0) => {
+  if (nums.length === 0) {
+    return acc
+  }
+
+  return add(nums.slice(1), acc + nums[0])
+}
+
+add([1,2,3])
+
+```
+
+```diff 2[20:27] title="We have an accumulator here which we start at 0. We'll build this by adding each element of the array to it."
+```
+
+```diff 3,5 title="Our base case checks against the length of the array"
+```
+
+```diff 7 title="Here is our recursion"
+```
+
+```diff 7[14:26] title="We will pass in the tail of the array. This is important to stop the recursion"
+```
+
+```diff 7[29:41],10[6:6] title="Then we pass in the sum of the accumulator and the first number in the array"
+```
+
+```diff 3,4,5 title="When the array is empty we come to our base case again"
+```
+
+```diff 4 title="Notice that we are actually returning something from our base case, the sum of the numbers"
+```
+
+</CodeSurfer>
+
+---
+
+### Pop Quiz
+
+Try to implement a join function on strings recursively.
+
+---
+
+<CodeSurfer>
+
+```js title="So something like this"
+
+join(["Hello", " ", "world!"]) // "Hello world!"
+
+```
+
+</CodeSurfer>
+
+---
+
+### What we'll be covering in this series
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>How to determine your B.A.R (Base Case, Action, Recursion)</li>
+    <li style={{marginBottom: '15px'}}>Dynamic Programming (Optimizing recursive calls by remembering prior results)</li>
+    <li style={{marginBottom: '15px'}}>Corecursion (Generating data from a seed value)</li>
+    <li style={{marginBottom: '15px'}}>Trampolining (Using HOF and iteration to capture recursion and reduce space complexity)</li>
+  </ul>
+</div>
+
+---
+
+### That's it!
+
+
+
