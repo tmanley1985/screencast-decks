@@ -12,11 +12,63 @@ export const theme = vsDark;
 
 ---
 
-## Given the same input, you get the same output
+## Rule: Given the same input, you get the same output
 
 ---
 
-## No Side Effects
+<CodeSurfer>
+
+```js
+
+const getUpperCase = letter => {
+
+  const lowerToUpper = {
+    a: 'A',
+    b: 'B',
+    ...
+  }
+
+  if (!(letter in lowerToUpper))
+    return null
+
+  return lowerToUpper[letter]
+}
+
+getUpperCase('a') // A
+
+```
+
+```diff 2[22:27] title="We accept a lowercase letter as input"
+```
+
+```diff 4,5,6,7,8 title="There's a mapping between lowercase and uppercase letters"
+```
+
+```diff 4,5,6,7,8 title="Because our domain is finite, we can precompute all the expected inputs/outputs"
+```
+
+```diff 10,11 title="I like to read this is as follows:"
+```
+
+```diff 10[7:7] title="If it's NOT true"
+```
+
+```diff 10[9:30] title="That letter is a key in lowerToUpper"
+```
+
+```diff 11 title="Return null"
+```
+
+```diff 13 title="If the input is valid, return the uppercase letter from our mapping"
+```
+
+</CodeSurfer>
+
+---
+
+
+
+## Rule: No Side Effects
 
 ---
 
@@ -24,7 +76,9 @@ export const theme = vsDark;
 
 ---
 
-## Side effects are anything that could conceivably cause the output to be different
+<div style={{ width: '80%', fontSize: '.75em'}}>
+Side effects are anything that could conceivably cause the output to be different
+</div>
 
 ---
 
@@ -32,22 +86,26 @@ export const theme = vsDark;
 
 ---
 
-## Here are certain examples
+### Here are a few examples
 
 
 <div style={{ width: '80%', fontSize: '.75em'}}>
-  <li>Interacting with a variable outside of the function's scope</li>
+  <li>Interacting with a variable that isn't input to the function</li>
   <li>Logging</li>
   <li>Randomness</li>
+  <li>IO</li>
 </div>
 
 ---
 
-## The problem is the world (state) can shift underneath your feet.
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+The problem is the world  <span style={{color: "#FEBE9C"}}><strong>(global state)</strong></span> can shift underneath your feet.
+</div>
 
 ---
 
-## Everything needs to be input to the function
+##### Anything you interact with needs to be  <span style={{color: "#FEBE9C"}}><strong>input</strong></span> to the function
 
 ---
 
@@ -56,7 +114,7 @@ export const theme = vsDark;
 
 <Step>
 
-```js title="Notice the output changes even don't change the input"
+```js title="Impure" subtitle="Notice the output changes even don't change the input"
 
 let a = 3
 
@@ -70,7 +128,7 @@ addOne() // 5
 
 ```
 
-```js title="Same output for same input"
+```js title="Pure" subtitle="Same output for same input"
 
 const addOne = x => x + 1
 
