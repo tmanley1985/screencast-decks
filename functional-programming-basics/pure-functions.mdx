@@ -12,13 +12,20 @@ export const theme = vsDark;
 
 ---
 
-## Rule: Given the same input, you get the same output
+
+#### Some Rules:
+
+
+<ul style={{ width: '80%', fontSize: '.75em'}}>
+<li>Given the same  <span style={{color: "#FEBE9C"}}><strong>input</strong></span>, you get the same  <span style={{color: "#FEBE9C"}}><strong>output</strong></span></li>
+<li>No <span style={{color: "#FEBE9C"}}><strong>Side Effects</strong></span></li>
+</ul>
 
 ---
 
 <CodeSurfer>
 
-```js
+```js title="Same output for same input"
 
 const getUpperCase = letter => {
 
@@ -47,6 +54,9 @@ getUpperCase('a') // A
 ```diff 4,5,6,7,8 title="Because our domain is finite, we can precompute all the expected inputs/outputs"
 ```
 
+```diff 10,11 title="But first we need to guard against bad input"
+```
+
 ```diff 10,11 title="I like to read this is as follows:"
 ```
 
@@ -63,12 +73,6 @@ getUpperCase('a') // A
 ```
 
 </CodeSurfer>
-
----
-
-
-
-## Rule: No Side Effects
 
 ---
 
