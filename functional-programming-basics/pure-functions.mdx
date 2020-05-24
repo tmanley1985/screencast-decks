@@ -12,13 +12,36 @@ export const theme = vsDark;
 
 ---
 
+### Prerequisites
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>You have a basic understanding of javascript syntax, especially es6</li>
+    <li style={{marginBottom: '15px'}}>You've been following along</li>
+    <li style={{marginBottom: '15px'}}>...and that's it</li>
+  </ul>
+</div>
+
+---
+
+## Why?
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Easier to reason about</li>
+  <li>Consistency/Determinstic</li>
+  <li>Easier to test</li>
+  <li>Forces you to think about your dependencies</li>
+</div>
+
+---
 
 #### Some Rules:
 
 
 <ul style={{ width: '80%', fontSize: '.75em'}}>
 <li>Given the same  <span style={{color: "#FEBE9C"}}><strong>input</strong></span>, you get the same  <span style={{color: "#FEBE9C"}}><strong>output</strong></span></li>
-<li>No <span style={{color: "#FEBE9C"}}><strong>Side Effects</strong></span></li>
+<li>The function should not produce <span style={{color: "#FEBE9C"}}><strong>side effects</strong></span></li>
 </ul>
 
 ---
@@ -51,10 +74,13 @@ getUpperCase('a') // A
 ```diff 4,5,6,7,8 title="There's a mapping between lowercase and uppercase letters"
 ```
 
-```diff 4,5,6,7,8 title="Because our domain is finite, we can precompute all the expected inputs/outputs"
+```diff 4,5,6,7,8 title="Because the domain is finite, we can precompute all the expected inputs/outputs"
 ```
 
-```diff 10,11 title="But first we need to guard against bad input"
+```diff 4,5,6,7,8 title="This is trivial. If you have your inputs/outputs you can just use a lookup"
+```
+
+```diff 10,11 title="Unless you want to guard against bad input"
 ```
 
 ```diff 10,11 title="I like to read this is as follows:"
@@ -81,7 +107,7 @@ getUpperCase('a') // A
 ---
 
 <div style={{ width: '80%', fontSize: '.75em'}}>
-Side effects are anything that could conceivably cause the output to be different
+Side effects are anything that could  <strong style={{color: "#FEBE9C"}}>conceivably</strong> cause the output to be different
 </div>
 
 ---
@@ -90,26 +116,31 @@ Side effects are anything that could conceivably cause the output to be differen
 
 ---
 
-### Here are a few examples
+### Examples of Side Effects
 
 
 <div style={{ width: '80%', fontSize: '.75em'}}>
   <li>Interacting with a variable that isn't input to the function</li>
-  <li>Logging</li>
+  <li>Mutating input to the function</li>
   <li>Randomness</li>
-  <li>IO</li>
+  <li>IO (logging, requests, database interaction, etc.)</li>
 </div>
 
 ---
 
 
 <div style={{ width: '80%', fontSize: '.75em'}}>
-The problem is the world  <span style={{color: "#FEBE9C"}}><strong>(global state)</strong></span> can shift underneath your feet.
+The problem is the world  <span style={{color: "#FEBE9C"}}><strong>(shared state)</strong></span> can shift underneath your feet.
 </div>
 
 ---
 
-##### Anything you interact with needs to be  <span style={{color: "#FEBE9C"}}><strong>input</strong></span> to the function
+## Our enemy is <span style={{color: "#FEBE9C"}}><strong>time</strong></span>!
+
+---
+
+### Anything you interact with in the function
+#### needs to be passed as <span style={{color: "#FEBE9C"}}><strong>input</strong></span> to the function
 
 ---
 
@@ -118,7 +149,7 @@ The problem is the world  <span style={{color: "#FEBE9C"}}><strong>(global state
 
 <Step>
 
-```js title="Impure" subtitle="Notice the output changes even don't change the input"
+```js title="Impure" subtitle="The output changes given the same input"
 
 let a = 3
 
@@ -143,3 +174,107 @@ addOne(3) // 4
 </Step>
 
 </CodeSurferColumns>
+
+---
+
+###### You can make an <span style={{color: "#FEBE9C"}}><strong>impure</strong></span> function <span style={{color: "#FEBE9C"}}><strong>pure</strong></span> by making it <span style={{color: "#FEBE9C"}}><strong>lazy</strong></span>
+
+---
+
+#### In other words: wrap it in a function
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Impure"
+
+const logger = console.log
+
+logger(3)
+
+```
+
+```js title="Pure?"
+
+const logger = x => () => console.log(x)
+
+const logThree = logger(3)
+
+logThree(3)
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+
+## Cheating?
+
+---
+
+### Kind of. Remember, side effects will happen.
+
+---
+
+### They're unavoidable if you wish to do anything
+
+---
+
+#### Push them to the boundaries of your program
+
+---
+
+#### They should happen later rather than sooner
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Impure"
+
+const addOne = x => {
+  console.log(x + 1)
+  return x + 1
+}
+
+addOne(1) // 2
+
+```
+
+```js title="Pure"
+
+const addOne = (x, logger) => ({
+    output: x + 1,
+    logOutput: () => logger(x + 1)
+})
+
+const {output, logOutput} = addOne(1, console)
+output // 2
+logOutput() // logs 2 to the console
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+## Issues
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Potentially longer parameter lists as you make parameters explicit</li>
+  <li>Possible code bloat from workarounds to ensure purity</li>
+</div>
+
+---
+
+## And that's it!

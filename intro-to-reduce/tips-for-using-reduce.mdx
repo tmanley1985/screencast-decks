@@ -1,0 +1,30 @@
+
+1. Name your accumulator and current value appropriately
+    - Gives context
+2. Keep the scope of the function low
+    - Single responsibility, if the function is getting too big, consider
+    splitting it up
+3. Remember the extra params
+    - You have access to the current index and the array you're operating on
+4. Don't reinvent map, filter, etc.
+    - It's good for a learning exercise
+    - If all you're doing is transforming values, use map.
+    - If all you're doing is 
+5. Create wrapper functions
+    - This helps improve readability and gives context
+6. Define your reducers separately
+    - If it makes sense to do so, write your reducer separately
+    - This gives a name to the operation and can give context
+7. Not using reduceRight
+    - This is javascript specific but instead of reversing an array and then operating on it
+    - Just use reduceRight
+8. Use early returns for improved readability
+    - Returning the accumulator early reduces code bloat
+9. Optimize Using Reduce
+    - If the data you're using is sufficiently large, multiple dot chain calls are inefficient
+    - You may even opt for a loop instead
+10. Always Use An accumulator
+    - In javascript you don't have to, but it's better to be explicit
+    - Prevents having to do a check in the reducer to see if the accumulator is set
+
+reduce()
