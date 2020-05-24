@@ -1,30 +1,224 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark, nightOwl } from "@code-surfer/themes";
 
-1. Name your accumulator and current value appropriately
-    - Gives context
-2. Keep the scope of the function low
-    - Single responsibility, if the function is getting too big, consider
-    splitting it up
-3. Remember the extra params
-    - You have access to the current index and the array you're operating on
-4. Don't reinvent map, filter, etc.
-    - It's good for a learning exercise
-    - If all you're doing is transforming values, use map.
-    - If all you're doing is 
-5. Create wrapper functions
-    - This helps improve readability and gives context
-6. Define your reducers separately
-    - If it makes sense to do so, write your reducer separately
-    - This gives a name to the operation and can give context
-7. Not using reduceRight
-    - This is javascript specific but instead of reversing an array and then operating on it
-    - Just use reduceRight
-8. Use early returns for improved readability
-    - Returning the accumulator early reduces code bloat
-9. Optimize Using Reduce
-    - If the data you're using is sufficiently large, multiple dot chain calls are inefficient
-    - You may even opt for a loop instead
-10. Always Use An accumulator
-    - In javascript you don't have to, but it's better to be explicit
-    - Prevents having to do a check in the reducer to see if the accumulator is set
+export const theme = vsDark;
 
-reduce()
+
+## Top  <span style={{color: "#FEBE9C"}}>5</span> Tips When Using Reduce
+
+---
+
+#### 1. Name Your  <span style={{color: "#FEBE9C"}}>(</span>Parameters<span style={{color: "#FEBE9C"}}>)</span> Appropriately
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="Better for generic data."
+
+import { getOrdersWithCustomers } from './SomeOrderService'
+
+const orders = await getOrdersWithCustomers()
+
+orders.reduce(
+    (acc, val) =>
+      acc.concat(val.customer),
+    []
+)
+
+```
+
+
+```js title="Better for domain logic."
+
+import { getOrdersWithCustomers } from './SomeOrderService'
+
+const orders = await getOrdersWithCustomers()
+
+orders
+    .reduce(
+        (customers, currentOrder) =>
+          customers.concat(currentOrder.customer),
+        []
+    )
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+## 2. Avoid Bloated Reducers
+
+---
+
+<CodeSurfer>
+
+
+
+```js title="Doing Too Much! Making Extra Calls!"
+
+import { getOrders, getCustomers, sendEmail, sendText } from './SomeService'
+
+const orders = await getOrders()
+
+const customers = orders.reduce(async (customers, currentOrder) => {
+    const customers = await getCustomers() // we're making the same call every iteration
+
+    const customer = customers.find(customer => customer.id === currentOrder.customer_id)
+
+    if (!customer) 
+        return customers
+
+    sendEmail(customer.id).catch(e => console.log(e))
+    sendText(customer.id).catch(e => console.log(e))
+
+    return customers.concat(customer)
+
+}, [])
+
+```
+
+</CodeSurfer>
+
+---
+
+## 3. Don't Reinvent Map, Filter, etc.
+
+---
+
+<CodeSurfer>
+
+```js title="Use functions for what they're meant for"
+
+import { isEven, addOne } from './some-math-file'
+
+// No
+[1,2,3,4]
+    .reduce((numbers, number) => numbers.concat(addOne(number)), [])
+
+// Yes
+
+[1,2,3,4].map(addOne)
+
+// No
+[1,2,3,4]
+    .reduce((numbers, number) => isEven(number) ? numbers.concat(number) : numbers, [])
+
+// Yes
+[1,2,3,4].filter(isEven)
+
+```
+
+```diff 10,17 title="It's about capturing intent"
+```
+
+</CodeSurfer>
+
+---
+
+## 4. Remember The Extra Parameters
+
+---
+
+<CodeSurfer>
+
+```js title="Current Index And Array"
+
+[1,2,3,4].reduce((acc, currentVal, i, arr) => {
+    ...
+}, [])
+
+```
+
+</CodeSurfer>
+
+---
+
+## 5. Always Use An Accumulator!
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+<Step>
+
+```js title="More Explicit. Less Checks."
+
+const allVotes = [
+  {name: 'Harry', votedFor: 'Ron'},
+  {name: 'Hermione', votedFor: 'Cedric'},
+  {name: 'Remus', votedFor: 'Ron'},
+]
+
+allVotes.reduce((votes, {votedFor}) => {
+
+  if (!(votedFor in votes)) {
+    votes[votedFor] = 1
+    return votes
+  }
+
+  votes[votedFor] = votes[votedFor] + 1
+  return votes
+
+}, {})
+
+// { Cedric: 1, Ron: 2 }
+
+```
+
+```js title="More Checks. Less Explicit."
+
+const allVotes = [
+  {name: 'Harry', votedFor: 'Ron'},
+  {name: 'Hermione', votedFor: 'Cedric'},
+  {name: 'Remus', votedFor: 'Ron'},
+]
+
+allVotes.reduce((votes, {votedFor}, i) => {
+
+  // i will start at 1 when the accumulator is not set
+  if (i === 1) {
+    // the accumulator will be the first element
+    // so we have to create our accumulator.
+    votes = { [votedFor]: 1 } 
+  }}
+
+  if (!(votedFor in votes)) {
+    votes[votedFor] = 1
+    return votes
+  }
+
+  votes[votedFor] = votes[votedFor] + 1
+  return votes
+
+})
+
+// { Cedric: 1, Ron: 2 }
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+### Coming Down The Pipe:
+
+<ul style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <li style={{marginBottom: '15px'}}>Implementing Object.fromEntries Using Reduce</li>
+  <li style={{marginBottom: '15px'}}>Reduce Right</li>
+  <li style={{marginBottom: '15px'}}>Transducers: A Love Story</li>
+</ul>
+
+---
+
+## That's it!
+
