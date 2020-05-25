@@ -1,0 +1,117 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark, nightOwl } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+
+# Reduce Right
+
+---
+
+### Prerequisites
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>You have a basic understanding of javascript syntax, especially es6</li>
+    <li style={{marginBottom: '15px'}}>You've been following along or understand reduce already</li>
+    <li style={{marginBottom: '15px'}}>...and that's it</li>
+  </ul>
+</div>
+
+---
+
+##### Array.reduceRight starts at the <span style={{color: "#FEBE9C"}}>end</span> of the array and moves <span style={{color: "#FEBE9C"}}>backward</span>
+
+---
+
+<CodeSurfer>
+
+```js title="It's akin to running Array.reverse, then Array.reduce"
+
+[1,2,3,4]
+    .reverse()
+    .reduce(...)
+
+[1,2,3,4]
+    .reduceRight(...)
+
+```
+
+```diff title="We can avoid iterating twice"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurferColumns themes={[github]}>
+
+
+<Step>
+
+```javascript title="More readable"
+
+[
+  {
+    releaseDate: '2019-01-01',
+    title:'Touching Brenda: A Netflix Original'
+  },
+  {
+    releaseDate: '2020-01-01',
+    title: 'Gary Busey Eats Anything'
+  }
+]
+  .reverse()
+  .map(movie => movie.title)
+
+  // ['Touching Brenda: A Netflix Original', 'Gary Busey Eats Anything']
+
+```
+
+```js title="Better for larger datasets"
+
+import { getMovies } from './SomeMovieApi'
+
+const movies = await getMovies()
+
+// Array.push would reduce memory if that's a concern.
+movies
+  .reduceRight(
+    (titles, movie) => titles.concat(movie.title),
+    []
+  )
+
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<CodeSurfer>
+
+```js title="The index starts at the end of the array"
+
+[1,2,3,4]
+  .reduceRight((acc, val, i) => {
+    console.log(i)
+    ...
+  }, [])
+
+// 3
+// 2
+// 1
+// 0
+
+```
+
+</CodeSurfer>
+
+---
+
+## And That's It!

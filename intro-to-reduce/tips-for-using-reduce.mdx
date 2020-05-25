@@ -12,7 +12,7 @@ export const theme = vsDark;
 
 ---
 
-#### 1. Name Your  <span style={{color: "#FEBE9C"}}>(</span>Parameters<span style={{color: "#FEBE9C"}}>)</span> Appropriately
+#### 5. Name Your  <span style={{color: "#FEBE9C"}}>(</span>Parameters<span style={{color: "#FEBE9C"}}>)</span> Appropriately
 
 ---
 
@@ -31,6 +31,7 @@ orders.reduce(
       acc.concat(val.customer),
     []
 )
+// [{name: 'Jake'}, {name: 'Oy'}]
 
 ```
 
@@ -47,6 +48,7 @@ orders
           customers.concat(currentOrder.customer),
         []
     )
+  // [{name: 'Roland'}, {name: 'Eddie'}]
 ```
 
 </Step>
@@ -55,7 +57,7 @@ orders
 
 ---
 
-## 2. Avoid Bloated Reducers
+## 4. Avoid Bloated Reducers
 
 ---
 
@@ -83,6 +85,29 @@ const customers = orders.reduce(async (customers, currentOrder) => {
     return customers.concat(customer)
 
 }, [])
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+
+```js title="We could have just used map!"
+
+import { getOrders, getCustomers, sendEmail, sendText } from './SomeService'
+
+const orders = await getOrders()
+const customers = await getCustomers()
+
+orders
+  .map(order => customers.find(customer => customer.id === order.customer_id))
+  .forEach(customer => {
+    sendEmail(customer.id).catch(e => console.log(e))
+    sendText(customer.id).catch(e => console.log(e))
+  })
 
 ```
 
@@ -124,7 +149,7 @@ import { isEven, addOne } from './some-math-file'
 
 ---
 
-## 4. Remember The Extra Parameters
+## 2. Remember The Extra Parameters
 
 ---
 
@@ -142,7 +167,7 @@ import { isEven, addOne } from './some-math-file'
 
 ---
 
-## 5. Always Use An Accumulator!
+## 1. Always Use An Accumulator!
 
 ---
 
