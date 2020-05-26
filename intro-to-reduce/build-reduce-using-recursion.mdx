@@ -1,0 +1,242 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+
+### Let's Build Reduce Using Recursion
+
+---
+
+### Prerequisites
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>You've been following along in the Intro To Reduce series</li>
+  <li>You've watched my Intro To Recursion video</li>
+  <li>And that's it!</li>
+</div>
+
+---
+
+### Let's Review: Reduce Has Three Parts
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>An iterable (we'll only be using arrays here)</li>
+  <li>An initial value known as the accumulator, often the empty state</li>
+  <li>A reducing function that will return a new accumulator</li>
+</div>
+
+---
+
+## We'll write this in 2 ways
+
+---
+
+## 1. Passing The Tail
+
+---
+
+<CodeSurfer>
+
+```js title="Head and Tail"
+
+const arr = [1,2,3,4]
+const [head, ...tail] = arr
+
+head // 1
+tail = [2,3,4]
+
+```
+
+```js title="An Empty Tail"
+
+const arr = [1]
+const [head, ...tail] = arr
+
+head // 1
+tail = []
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js title="Wall Of Code Alert"
+
+const reduce = (reducingFn, accumulator, arr) => {
+	if (arr.length === 0)
+        return accumulator
+
+    const newAccumulator = reducingFn(accumulator, arr[0])
+
+	return reduce(reducingFn, newAccumulator, arr.slice(1))
+}
+
+reduce((acc,val) => acc + val, 0, [1,2,3])
+
+```
+
+```diff 2[16:45] title="Look familiar?"
+```
+
+```diff 3,4 title="Base Case: If the array is empty, there's nothing left to do!"
+```
+
+```diff 6 title="Call the reducing function to get the new accumulator"
+```
+
+```diff 6[39:50] title="We'll pass in the current accumulator"
+```
+
+```diff 6[52:57] title="And the head of the array"
+```
+
+```diff 8 title="Finally, we need to recurse so we can move through the array"
+```
+
+```diff 8 title="And move toward our base case"
+```
+
+```diff 8 title="So reduce will call itself"
+```
+
+```diff 8[19:28] title="The reducing function stays the same"
+```
+
+```diff 6[11:24],8[31:44] title="We'll pass in the new accumulator"
+```
+
+```diff 8[47:58] title="And here's where we can move toward our base case"
+```
+
+```diff 8[47:58] title="We're going to pass in the tail of the array"
+```
+
+```diff 8[47:58] title="This will ensure the array gets smaller and smaller"
+```
+
+```diff 3,8[47:58] title="Eventually becoming empty and hitting our base case!"
+```
+
+```diff title="Could we clean some of this up?"
+```
+
+```js title="We can remove the intermediate variable"
+
+const reduce = (reducingFn, accumulator, arr) => {
+	if (arr.length === 0)
+        return accumulator
+
+	return reduce(reducingFn, reducingFn(accumulator, arr[0]), arr.slice(1))
+}
+
+reduce((acc,val) => acc + val, 0, [1,2,3])
+
+```
+
+```js title="If you're into the whole brevity thing"
+
+const reduce = (reducingFn, accumulator, arr) =>
+    arr.length === 0
+        ? accumulator
+        : reduce(reducingFn, reducingFn(accumulator, arr[0]), arr.slice(1))
+
+reduce((acc,val) => acc + val, 0, [1,2,3])
+
+
+```
+
+</CodeSurfer>
+
+---
+
+## 2. Using An Incrementer
+
+---
+
+<CodeSurfer>
+
+```js title="Just like a for loop!"
+
+const arr = [1,2,3]
+
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i])
+}
+
+// 1
+// 2
+// 3
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js
+
+const reduce = (reducingFn, accumulator, arr, i = 0) => {
+
+	if (i > arr.length - 1)
+        return accumulator
+        
+    // Now that we have the index (i) we can pass that in as well!
+    const newAccumulator = reducingFn(accumulator, arr[i], i, arr)
+
+	return reduce(reducingFn, newAccumulator, arr, i + 1)
+}
+
+
+reduce((acc,val) => acc + val, 0, [1,2,3])
+
+```
+
+```diff 2[47:51] title="We're keeping track of the current index in the array"
+```
+
+```diff 4,5 title="We'll stop the recursion once i moves out of bounds"
+```
+
+```diff 8 title="We're still going to generate our new accumulator"
+```
+
+```diff 8[60:65] title="We'll pass the current index in, along with the array"
+```
+
+```diff 10 title="We're still going to recurse"
+```
+
+```diff 10[47:51] title="We'll pass in the entire array"
+```
+
+```diff 10[50:56] title="And we're incrementing i to move through the array"
+```
+
+```diff 4,5 title="Eventually, i will move out of bounds, stopping the recursion"
+```
+
+</CodeSurfer>
+
+---
+
+## Tinker, tinker, tinker
+
+---
+
+## Then teach it to someone else!
+
+---
+
+# And That's It!
