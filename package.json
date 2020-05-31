@@ -2,7 +2,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "mdx-deck ./intro-to-reduce/transducers.mdx",
+    "start": "mdx-deck ./intro-to-recursion/sum-the-first-n-elements.mdx",
     "build": "mdx-deck build deck.mdx",
     "test": "echo \"there are no tests\""
   },

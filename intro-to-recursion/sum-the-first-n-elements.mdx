@@ -1,0 +1,232 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+# Sum The First N Elements In An Array
+
+---
+
+### What I will assume about you
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>You have a basic understanding of javascript syntax</li>
+    <li style={{marginBottom: '15px'}}>You've been following along in the Intro To Recursion series</li>
+    <li style={{marginBottom: '15px'}}>...and that's it</li>
+  </ul>
+</div>
+
+---
+
+
+## The Problem
+
+You may have seen this on Code Academy!
+
+Let's have a look!
+
+---
+
+## A few concepts
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>B.A.R</li>
+    <li style={{marginBottom: '15px'}}>Moving through the array</li>
+    <li style={{marginBottom: '15px'}}>A recursive function can't finish until every subsequent call is finished</li>
+  </ul>
+</div>
+
+---
+
+
+### Mental Models: Moving Through An Array
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>Passing The Tail</li>
+    <li style={{marginBottom: '15px'}}>Using An Incrementer/Decrementer</li>
+  </ul>
+</div>
+
+---
+
+
+<CodeSurfer>
+
+```js title="Pseudo Code To The Rescue"
+
+function sum(arr, n) {
+    // Base Case
+    
+    // Action
+
+    // Recursion
+}
+
+```
+
+```js title="The simplest input"
+
+sum([1], 0) // 0
+
+```
+
+```js title="The first 0 elements are NO elements"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    // Action
+
+    // Recursion
+}
+
+sum([1], 0) // 0
+
+```
+
+```js title="What is our action?"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    // Action
+
+    // Recursion
+}
+
+sum([1], 0) // 0
+
+```
+
+```js title="What's the purpose of the function? Addition!"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return ? + ?
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+```js title="Find the element we're on and add it to something"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[?] + ?
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+```js title="Use n to find the index of the current element"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[n - 1] + ?
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+```js title="Why do we have to subtract 1 from n?"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[n - 1] + ?
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+```js title="Blasted arrays are zero base indexed!"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[n - 1] + ?
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+```diff 11[10,10] title="When n is 3, 4 is our first element. It's index is n - 1 = 2"
+```
+
+```js title="Add the element to the sum of the element before it!"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[n - 1] + sum(arr, ?)
+
+    // Recursion
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+```diff title="What are we using to move through the array? Our parameter n!"
+```
+
+```js title="This is how we move backward through the array"
+
+function sum(arr, n) {
+    if (n === 0)
+        return 0
+    
+    return arr[n - 1] + sum(arr, n - 1)
+}
+
+sum([2,3,4,5], 3) // 9
+
+```
+
+</CodeSurfer>
+
+---
+
+---
+<CodeSurfer>
+
+
+```js file="./stack-visuals/sum-the-first-n-elements/first.js"
+```
+
+</CodeSurfer>
+---
+
+## And That's It!
