@@ -6,5 +6,5 @@
     if (3 === 0)
         return 0
     
-    return 4 + sum([2,3,4,5], 3 - 1)
+    return 4 + 5 // 9
 }

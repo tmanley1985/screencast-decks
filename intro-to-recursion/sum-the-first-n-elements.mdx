@@ -7,7 +7,7 @@ import { github, vsDark } from "@code-surfer/themes";
 
 export const theme = vsDark;
 
-# Sum The First N Elements In An Array
+### Sum The First N Elements In An Array
 
 ---
 
@@ -26,7 +26,7 @@ export const theme = vsDark;
 
 ## The Problem
 
-You may have seen this on Code Academy!
+You may have seen this on <span style={{color: "#FEBE9C"}}><strong>Free Code Camp!</strong></span>
 
 Let's have a look!
 
@@ -56,6 +56,13 @@ Let's have a look!
 
 ---
 
+##### We'll use a decrementer to move backward through the array!
+
+---
+
+#### Because addition is commutative, order doesn't matter!
+
+---
 
 <CodeSurfer>
 
@@ -182,10 +189,13 @@ sum([2,3,4,5], 3) // 9
 
 ```
 
+```diff title="If want the third element, you really want the element with the index of 2"
+```
+
 ```diff 11[10,10] title="When n is 3, 4 is our first element. It's index is n - 1 = 2"
 ```
 
-```js title="Add the element to the sum of the element before it!"
+```js title="Add the element we're on, to the sum of the elements before it!"
 
 function sum(arr, n) {
     if (n === 0)
@@ -215,18 +225,95 @@ sum([2,3,4,5], 3) // 9
 
 ```
 
+```diff title="As n is decremented, so does our index in the array"
+```
+
 </CodeSurfer>
 
 ---
 
+## Let's watch the stack wind and unwind!
+
 ---
+
 <CodeSurfer>
 
 
 ```js file="./stack-visuals/sum-the-first-n-elements/first.js"
 ```
+```js file="./stack-visuals/sum-the-first-n-elements/second.js"
+```
+```js file="./stack-visuals/sum-the-first-n-elements/third.js"
+```
+```js file="./stack-visuals/sum-the-first-n-elements/fourth.js"
+```
+```js file="./stack-visuals/sum-the-first-n-elements/fifth.js"
+```
+```js file="./stack-visuals/sum-the-first-n-elements/sixth.js"
+```
+```js file="./stack-visuals/sum-the-first-n-elements/seventh.js"
+```
 
 </CodeSurfer>
+
+---
+## Another Visual! Expansion!
+
+---
+
+#### Remember polynomial from school? Neither do I.
+
+---
+
+#### We can take our recursive calls and expand them!
+
+---
+
+<CodeSurfer>
+
+```js title="N is 3"
+
+    4 + sum([2,3,4,5], 3 - 1)
+
+```
+
+```js title="N is 2"
+
+  4 + 3 + sum([2,3,4,5], 2 - 1)
+
+```
+
+```js title="N is 1"
+
+    4 + 3 + 2 + sum([2,3,4,5], 1 - 1)
+
+```
+
+```js title="N is 0"
+
+    4 + 3 + 2 + 0 // 9
+
+```
+
+</CodeSurfer>
+
+---
+
+## Let's Run Our Tests!
+
+---
+
+## Still Stuck?
+
+<div style={{ maxWidth: "80%", fontSize: '.75em'}}>
+  <ul>
+    <li style={{marginBottom: '15px'}}>Place Log Statements</li>
+    <li style={{marginBottom: '15px'}}>Use simple examples first</li>
+    <li style={{marginBottom: '15px'}}>Question each line</li>
+    <li style={{marginBottom: '15px'}}>Teach it to a rubber duck!</li>
+  </ul>
+</div>
+
 ---
 
 ## And That's It!
