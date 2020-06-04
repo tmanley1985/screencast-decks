@@ -8,7 +8,7 @@ import { github, vsDark } from "@code-surfer/themes";
 export const theme = vsDark;
 
 
-## Transducers
+## Transducers Part 1: Map
 
 ---
 
@@ -29,13 +29,39 @@ Then we'll look at a real world use case that will solidify our understanding.
 
 ## First Pass
 
-run the predicate function and map in the body of Reducers
+---
 
 <CodeSurfer>
 
 ```js
 
-import { isEven, }
+import { isEven, addOne } from 'some-math-file'
+
+[1,2,3,4]
+  .map(addOne)
+  .filter(isEven) // [2,4]
+
+```
+
+```js
+
+import { isEven, addOne } from 'some-math-file'
+
+[1,2,3,4]
+  .reduce((acc, val) => {
+    // Add one to the current value.
+    const transformedValue = addOne(val)
+  
+    // Keep only even numbers.
+    if (!isEven(transformedValue))
+      return acc
+
+    // Push the transformed item onto the accumulator
+    acc.push(transformedValue)
+
+    return acc
+
+  }, []) // [2,4]
 
 ```
 
@@ -51,19 +77,227 @@ import { isEven, }
 
 ---
 
-## Reducers Returning Reducers
+## Transducers take a reducing function and returns a new reducing function
 
 ---
 
-## Reducers Factory (Making NEW Reducers)
+## (accumulator, currentValue) => newAccumulator
 
 ---
 
-## Mapper, Filterer (makeFilterReducer, makeMapReducer)
+## Transducers should work on different data structures
+
+(but we're just gonna use arrays)
 
 ---
 
-## Real World Use case
+<CodeSurfer>
+
+```js
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+```
+
+
+```diff 2[31:40] title="It takes a reducing function"
+```
+
+```diff 2[45:78] title="And returns a reducing function!"
+```
+
+```diff 2[59:78] title="This is just calling the reducing function passed in"
+```
+
+```diff 2[59:78] title="Which will return a new accumulator!"
+```
+
+```diff 2[45:78] title="This is a wrapper around the reducing function"
+```
+
+```diff 2[45:78] title="Not very useful, eh? We'll get to that."
+```
+
+```js title="How can we use this?"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [1,2,3,4]
+
+```
+
+```diff 3 title="We have our concat function"
+```
+
+```diff 5 title="And our simple noop transducer"
+```
+
+```diff 7 title="Let's create a NEW reducing function"
+```
+
+```diff 9 title="And what does reduce take as it's first argument?"
+```
+
+```js title="This is what is happening"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce((acc, val) => concat(acc, val + 1), []) // [1,2,3,4]
+
+```
+
+```diff 5 title="Again, not very interesting"
+```
+
+```js 5[75:77],5[51:53] title="What if we wanted to modify the current value passed in?"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [1,2,3,4]
+
+```
+
+```js 5[75:81],9 title="Let's add one to it."
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
+
+const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js 5 title="Let's change the name of this transducer"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const addOneTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
+
+const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+
+```
+
+</CodeSurfer>
+
+---
+
+## What if we wanted to allow any transformation like Array.map?
+
+---
+
+###### Where we'd take a <strong style={{color: "#FEBE9C"}}>transformation</strong> function and apply it to the current value
+
+---
+
+<CodeSurfer>
+
+```js title="How could we change the transducer to do that?"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+const addOneTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
+
+const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+
+```
+
+```js title="How could we change the transducer to do that?"
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+// This creates a transducer!
+const makeTransducer = transformFn => reducingFn => (acc, val) => reducingFn(acc, transformFn(val))
+
+// These return transducers!
+const addOneTransducer = makeTransducer(val => val + 1)
+const timesTwoTransducer = makeTransducer(val => val * 2)
+
+const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+
+```
+
+```diff 6 title="Now we have a function to create transducers for us!"
+```
+
+```diff 6[24:34] title="It takes a transformation function like addOne"
+```
+
+```diff 6[39:99] title="And returns a transducer that is waiting on a reducing function"
+```
+
+```diff 6[83:98] title="And will use the tranformation function on the value passed in"
+```
+
+```diff 6[83:98] title="Important: This operation happens FIRST before the reducing"
+```
+
+</CodeSurfer>
+
+---
+
+## Transducers Compose!
+
+---
+
+<CodeSurfer>
+
+
+```js title="Remember, the output of one function can be the input to another!"
+
+const compose = (f, g) => x => f(g(x))
+
+// This is a reducing function too!
+const concat = (acc, val) => acc.concat(val)
+
+// This creates a transducer!
+const makeTransducer = transformFn => reducingFn => (acc, val) => reducingFn(acc, transformFn(val))
+
+// These return transducers!
+const addOneTransducer = makeTransducer(val => val + 1)
+const timesTwoTransducer = makeTransducer(val => val * 2)
+
+const addOneAndDoubleTransducer = compose(addOneTransducer, timesTwoTransducer)
+
+const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing function!
+
+[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+
+```
+
+</CodeSurfer>
 
 ---
 
