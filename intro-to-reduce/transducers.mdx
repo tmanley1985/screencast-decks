@@ -8,26 +8,29 @@ import { github, vsDark } from "@code-surfer/themes";
 export const theme = vsDark;
 
 
-## Transducers Part 1: Map
+## Transducers Part 1: Mapping
 
 ---
 
 ## Prerequisites
 
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>You've been following along or understand reduce already</li>
+  <li>You understand currying and partial application</li>
+  <li>You understand function composition</li>
+  <li>And that's it!</li>
+</div>
+
 ---
 
 ## Keep The Context Low
 
-We'll look at a naive example first so that we can understand the concept.
-Then we'll look at a real world use case that will solidify our understanding.
+Naive examples are easier to understand
 
 ---
 
 ## A Motivating Example
-
----
-
-## First Pass
 
 ---
 
@@ -73,27 +76,36 @@ import { isEven, addOne } from 'some-math-file'
 
 ---
 
+## Benefits
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Only one iteration</li>
+  <li>Only one intermediate data structure</li>
+  <li>Should work on different data structures (streams, trees, etc)</li>
+  <li>Because of how reducers compose, we can preserve readability</li>
+</div>
+
+---
+
 ## Higher Order Functions
 
 ---
 
-## Transducers take a reducing function and returns a new reducing function
+##### Transducers take a <strong style={{color: "#FEBE9C"}}>reducing function</strong> and return a new <strong style={{color: "#FEBE9C"}}>reducing function</strong>
 
 ---
 
-## (accumulator, currentValue) => newAccumulator
+### Remember the signature of a <strong style={{color: "#FEBE9C"}}>reducing function</strong>
 
 ---
 
-## Transducers should work on different data structures
-
-(but we're just gonna use arrays)
+#### (accumulator, currentValue) => <strong style={{color: "#FEBE9C"}}>newAccumulator</strong>
 
 ---
 
 <CodeSurfer>
 
-```js
+```js title="The simplest transducer"
 
 const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 
@@ -103,7 +115,7 @@ const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 ```diff 2[31:40] title="It takes a reducing function"
 ```
 
-```diff 2[45:78] title="And returns a reducing function!"
+```diff 2[45:78] title="And returns a NEW reducing function!"
 ```
 
 ```diff 2[59:78] title="This is just calling the reducing function passed in"
@@ -131,13 +143,16 @@ const concatReducingFn = theSimplestTransducer(concat) // returns a reducing fun
 
 ```
 
-```diff 3 title="We have our concat function"
+```diff 3 title="We have our concat function (use push to optimize)"
 ```
 
 ```diff 5 title="And our simple noop transducer"
 ```
 
 ```diff 7 title="Let's create a NEW reducing function"
+```
+
+```diff 5[31:40],7[48:53] title="We do that by passing in concat as our reducing function"
 ```
 
 ```diff 9 title="And what does reduce take as it's first argument?"
@@ -152,8 +167,11 @@ const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 
 const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce((acc, val) => concat(acc, val + 1), []) // [1,2,3,4]
+[1,2,3,4].reduce((acc, val) => concat(acc, val), []) // [1,2,3,4]
 
+```
+
+```diff title="Let's look at our transducer again"
 ```
 
 ```diff 5 title="Again, not very interesting"
@@ -204,11 +222,17 @@ const concatReducingFn = addOneTransducer(concat) // returns a reducing function
 
 ```
 
+```diff 7 title="So we'll create our new reducer that will add one first then concat"
+```
+
+```diff 9 title="And see how it affects the output"
+```
+
 </CodeSurfer>
 
 ---
 
-## What if we wanted to allow any transformation like Array.map?
+##### What if we wanted to allow any transformation like <strong style={{color: "#FEBE9C"}}>Array.map</strong>?
 
 ---
 
@@ -255,10 +279,16 @@ const concatReducingFn = addOneTransducer(concat) // returns a reducing function
 ```diff 6[24:34] title="It takes a transformation function like addOne"
 ```
 
-```diff 6[39:99] title="And returns a transducer that is waiting on a reducing function"
+```diff 6[39:99] title="And returns a transducer"
 ```
 
-```diff 6[83:98] title="And will use the tranformation function on the value passed in"
+```diff 6[39:48] title="That will take a reducing function"
+```
+
+```diff 6[53:99] title="And returns a new reducing function"
+```
+
+```diff 6[83:98] title="But will call the transformation function on the current value"
 ```
 
 ```diff 6[83:98] title="Important: This operation happens FIRST before the reducing"
@@ -268,16 +298,31 @@ const concatReducingFn = addOneTransducer(concat) // returns a reducing function
 
 ---
 
-## Transducers Compose!
+### Transducers Compose!
+
+---
+
+### The <strong style={{color: "#FEBE9C"}}>output</strong> of a transducer is a reducing function
+
+---
+
+### The <strong style={{color: "#FEBE9C"}}>input</strong> of a transducer is a reducing function
+
+---
+
+
+const transducer = reducingFn => (acc,val) => reducingFn(acc, val)
+
+const newTransducer = transducer(transducer(concat))
 
 ---
 
 <CodeSurfer>
 
 
-```js title="Remember, the output of one function can be the input to another!"
+```js title="Let's step through the code"
 
-const compose = (f, g) => x => f(g(x))
+const composeTransducers = (transducerOne, transducerTwo) => reducingFn => transducerOne(transducerTwo(reducingFn))
 
 // This is a reducing function too!
 const concat = (acc, val) => acc.concat(val)
@@ -293,7 +338,54 @@ const addOneAndDoubleTransducer = compose(addOneTransducer, timesTwoTransducer)
 
 const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+[1,2,3,4].reduce(concatReducingFn, []) // [4,6,8,10]
+
+```
+
+```diff title="We have our compose function"
+```
+
+```diff title="And we'll create a new function"
+```
+
+```diff title="That is the composition of our two transducers"
+```
+
+```diff title="Important: These will execute from left to right"
+```
+
+```diff title="This is because transducers will transform the data first, then call the function that's passed in"
+```
+
+</CodeSurfer>
+
+---
+
+#### So we've handled <strong style={{color: "#FEBE9C"}}>transformations</strong>
+
+---
+
+#### What about <strong style={{color: "#FEBE9C"}}>filtering</strong>?
+
+---
+
+#### We'll talk about that in part two
+
+---
+
+#### This is already a lot to digest
+
+---
+
+#### Homework
+
+---
+
+<CodeSurfer>
+
+```js title="Create a transducer that will transform lowercase letters to uppercase"
+
+['a', 'b', 'c'].reduce(upperCaseReducer, []) // ['A', 'B', 'C']
 
 ```
 
@@ -302,7 +394,5 @@ const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing
 ---
 
 ## And That's It!
-
-Call To Action
 
 ---
