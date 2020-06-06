@@ -310,13 +310,6 @@ const concatReducingFn = addOneTransducer(concat) // returns a reducing function
 
 ---
 
-
-const transducer = reducingFn => (acc,val) => reducingFn(acc, val)
-
-const newTransducer = transducer(transducer(concat))
-
----
-
 <CodeSurfer>
 
 
@@ -334,7 +327,7 @@ const makeTransducer = transformFn => reducingFn => (acc, val) => reducingFn(acc
 const addOneTransducer = makeTransducer(val => val + 1)
 const timesTwoTransducer = makeTransducer(val => val * 2)
 
-const addOneAndDoubleTransducer = compose(addOneTransducer, timesTwoTransducer)
+const addOneAndDoubleTransducer = composeTransducers(addOneTransducer, timesTwoTransducer)
 
 const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing function!
 
@@ -342,19 +335,25 @@ const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing
 
 ```
 
-```diff title="We have our compose function"
+```diff 2 title="We have our compose function"
 ```
 
-```diff title="And we'll create a new function"
+```diff 2 title="Important: These will execute from left to right"
 ```
 
-```diff title="That is the composition of our two transducers"
+```diff 2 title="Remember: transducers will transform the data first, then call the function that's passed in"
 ```
 
-```diff title="Important: These will execute from left to right"
+```diff 14 title="And we'll create a new function"
 ```
 
-```diff title="This is because transducers will transform the data first, then call the function that's passed in"
+```diff 11,12,14 title="That is the composition of our two transducers"
+```
+
+```diff 16 title="We'll use concat to create our NEW reducing function"
+```
+
+```diff 18 title="And we'll pass the reducing function into reduce!"
 ```
 
 </CodeSurfer>
@@ -385,7 +384,7 @@ const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing
 
 ```js title="Create a transducer that will transform lowercase letters to uppercase"
 
-['a', 'b', 'c'].reduce(upperCaseReducer, []) // ['A', 'B', 'C']
+['a', 'b', 'c'].reduce(upperCaseReducingFn, []) // ['A', 'B', 'C']
 
 ```
 
