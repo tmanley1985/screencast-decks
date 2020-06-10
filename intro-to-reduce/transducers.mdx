@@ -36,7 +36,7 @@ Naive examples are easier to understand
 
 <CodeSurfer>
 
-```js
+```js title="Pro: Easy To Read"
 
 import { isEven, addOne } from 'some-math-file'
 
@@ -46,7 +46,26 @@ import { isEven, addOne } from 'some-math-file'
 
 ```
 
-```js
+```diff title="Pro: Easy To Reason About"
+```
+
+```diff title="Con: Iterating Twice"
+```
+
+```diff title="Con: Intermediate Arrays"
+```
+
+</CodeSurfer>
+
+---
+
+### How can we avoid the cons?
+
+---
+
+<CodeSurfer>
+
+```js title="Implement Map and Filter in terms of Reduce"
 
 import { isEven, addOne } from 'some-math-file'
 
@@ -68,6 +87,9 @@ import { isEven, addOne } from 'some-math-file'
 
 ```
 
+```diff title="This can become bloated and hard to reason about"
+```
+
 </CodeSurfer>
 
 ---
@@ -82,7 +104,7 @@ import { isEven, addOne } from 'some-math-file'
   <li>Only one iteration</li>
   <li>Only one intermediate data structure</li>
   <li>Should work on different data structures (streams, trees, etc)</li>
-  <li>Because of how reducers compose, we can preserve readability</li>
+  <li>Because of how transducers compose, we can preserve readability</li>
 </div>
 
 ---
@@ -92,6 +114,10 @@ import { isEven, addOne } from 'some-math-file'
 ---
 
 ##### Transducers take a <strong style={{color: "#FEBE9C"}}>reducing function</strong> and return a new <strong style={{color: "#FEBE9C"}}>reducing function</strong>
+
+---
+
+### Think of them as  <strong style={{color: "#FEBE9C"}}>factories</strong> for reducing functions
 
 ---
 
@@ -137,9 +163,9 @@ const concat = (acc, val) => acc.concat(val)
 
 const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 
-const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+const reducingFn = theSimplestTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [1,2,3,4]
+[1,2,3,4].reduce(reducingFn, []) // [1,2,3,4]
 
 ```
 
@@ -152,7 +178,7 @@ const concatReducingFn = theSimplestTransducer(concat) // returns a reducing fun
 ```diff 7 title="Let's create a NEW reducing function"
 ```
 
-```diff 5[31:40],7[48:53] title="We do that by passing in concat as our reducing function"
+```diff 5[31:40],7[42:47] title="We do that by passing in concat as our reducing function"
 ```
 
 ```diff 9 title="And what does reduce take as it's first argument?"
@@ -165,7 +191,7 @@ const concat = (acc, val) => acc.concat(val)
 
 const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 
-const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+const reducingFn = theSimplestTransducer(concat) // returns a reducing function!
 
 [1,2,3,4].reduce((acc, val) => concat(acc, val), []) // [1,2,3,4]
 
@@ -184,23 +210,26 @@ const concat = (acc, val) => acc.concat(val)
 
 const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
 
-const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+const reducingFn = theSimplestTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [1,2,3,4]
+[1,2,3,4].reduce(reducingFn, []) // [1,2,3,4]
 
 ```
 
-```js 5[75:81],9 title="Let's add one to it."
+```js 5[75:81] title="Let's add one to it."
 
 // This is a reducing function too!
 const concat = (acc, val) => acc.concat(val)
 
 const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
 
-const concatReducingFn = theSimplestTransducer(concat) // returns a reducing function!
+const reducingFn = theSimplestTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+[1,2,3,4].reduce(reducingFn, []) // [2,3,4,5]
 
+```
+
+```diff 9 title="Notice the output"
 ```
 
 </CodeSurfer>
@@ -216,13 +245,13 @@ const concat = (acc, val) => acc.concat(val)
 
 const addOneTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
 
-const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+const reducingFn = addOneTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+[1,2,3,4].reduce(reducingFn, []) // [2,3,4,5]
 
 ```
 
-```diff 7 title="So we'll create our new reducer that will add one first then concat"
+```diff 7 title="Our reducing function will add one and then concat"
 ```
 
 ```diff 9 title="And see how it affects the output"
@@ -249,9 +278,9 @@ const concat = (acc, val) => acc.concat(val)
 
 const addOneTransducer = reducingFn => (acc, val) => reducingFn(acc, val + 1)
 
-const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+const reducingFn = addOneTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+[1,2,3,4].reduce(reducingFn, []) // [2,3,4,5]
 
 ```
 
@@ -267,13 +296,16 @@ const makeTransducer = transformFn => reducingFn => (acc, val) => reducingFn(acc
 const addOneTransducer = makeTransducer(val => val + 1)
 const timesTwoTransducer = makeTransducer(val => val * 2)
 
-const concatReducingFn = addOneTransducer(concat) // returns a reducing function!
+const reducingFn = addOneTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [2,3,4,5]
+[1,2,3,4].reduce(reducingFn, []) // [2,3,4,5]
 
 ```
 
 ```diff 6 title="Now we have a function to create transducers for us!"
+```
+
+```diff 6 title="It's like a factory for transducers!"
 ```
 
 ```diff 6[24:34] title="It takes a transformation function like addOne"
@@ -329,9 +361,9 @@ const timesTwoTransducer = makeTransducer(val => val * 2)
 
 const addOneAndDoubleTransducer = composeTransducers(addOneTransducer, timesTwoTransducer)
 
-const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing function!
+const reducingFn = addOneAndDoubleTransducer(concat) // returns a reducing function!
 
-[1,2,3,4].reduce(concatReducingFn, []) // [4,6,8,10]
+[1,2,3,4].reduce(reducingFn, []) // [4,6,8,10]
 
 ```
 
@@ -384,7 +416,7 @@ const concatReducingFn = addOneAndDoubleTransducer(concat) // returns a reducing
 
 ```js title="Create a transducer that will transform lowercase letters to uppercase"
 
-['a', 'b', 'c'].reduce(upperCaseReducingFn, []) // ['A', 'B', 'C']
+['a', 'b', 'c'].reduce(upperCaseTransducer(concat), []) // ['A', 'B', 'C']
 
 ```
 
