@@ -1,0 +1,383 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+
+export const theme = vsDark;
+
+
+## Transducers Part 2: Filtering
+
+---
+
+## Prerequisites
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>You have an understanding of javascript, especially es6</li>
+  <li>You've been following along or understand reduce already</li>
+  <li>You've watched the first video on transducers</li>
+  <li>And that's it!</li>
+</div>
+
+---
+
+## A Review Of What We've Learned
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Transducers are functions</li>
+  <li>Transducers take reducing functions and return NEW reducing functions</li>
+  <li>Transducers modify the input (usually the current value) to the reducing function</li>
+  <li>Transducers reduce unnecessary iteration</li>
+  <li>Transducers only need one intermediate array</li>
+  <li>Transducers compose with one another</li>
+</div>
+
+---
+
+## A Motivating Example
+
+---
+
+<CodeSurfer>
+
+```js title="How could we use transducers to accomplish this?"
+
+import { isEven } from 'some-math-file'
+
+[1,2,3,4]
+  .filter(isEven) // [2,4]
+
+```
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js title="Remember this?"
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js title="Not very interesting"
+
+import { isEven } from 'some-math-file'
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+const concat = (acc, val) => {
+    acc.push(val)
+    return acc
+}
+
+const reducingFn = theSimplestTransducer(concat)
+
+[1,2,3,4].reduce(reducing, []) // [1,2,3,4]
+
+```
+
+```js title="How could we change our transducer to remove even numbers?"
+
+import { isEven } from 'some-math-file'
+
+const theSimplestTransducer = reducingFn => (acc, val) => reducingFn(acc, val)
+
+const concat = (acc, val) => {
+    acc.push(val)
+    return acc
+}
+
+const reducingFn = theSimplestTransducer(concat)
+
+[1,2,3,4].reduce(reducingFn, []) // [1,2,3,4]
+
+```
+
+
+```js title="Let's rename our transducer"
+
+import { isEven } from 'some-math-file'
+
+const keepEvenNumsTransducer = reducingFn => (acc, val) => isEven(val) ? reducingFn(acc, val) : acc
+
+const concat = (acc, val) => {
+    acc.push(val)
+    return acc
+}
+
+const reducingFn = keepEvenNumsTransducer(concat)
+
+[1,2,3,4].reduce(reducingFn, []) // [2,4]
+
+```
+
+```diff title="It will take a reducing function"
+```
+
+```diff title="And produce a NEW reducing function"
+```
+
+```diff title="That will check to see if the current value is even"
+```
+
+```diff title="If it is, we'll just pass the accumulator and current value to the reducing function"
+```
+
+```diff title="But if it isn't even, we'll just return the accumulator"
+```
+
+```diff title="Effectively removing the value"
+```
+
+```diff title="And so here we see we're keeping the even numbers"
+```
+
+</CodeSurfer>
+
+---
+
+#### But what if we wanted to use any predicate function?
+
+---
+
+#### Like Array.filter
+
+---
+
+<CodeSurfer>
+
+```js title="How could we modify this transducer to accomplish that?"
+
+import { isEven } from 'some-math-file'
+
+const keepEvenNumsTransducer = reducingFn => (acc, val) => isEven(val) ? reducingFn(acc, val) : acc
+
+```
+
+```js title="What if we accept a predicate function?"
+
+import { isEven } from 'some-math-file'
+
+const keepEvenNumsTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+
+```
+
+```js title="But now the name doesn't make sense"
+
+import { isEven } from 'some-math-file'
+
+const keepEvenNumsTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+
+```
+
+```js title="How about this?"
+
+import { isEven } from 'some-math-file'
+
+const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+
+```
+
+```diff title="It's a factory for transducers that will filter elements"
+```
+
+```diff title="It will take a function like isEven, isOdd, etc."
+```
+
+```diff title="That will produce a NEW transducer"
+```
+
+```diff title="And like all transducers, it will accept a reducing function"
+```
+
+```diff title="And like all transducers, when called, it will create a NEW reducing function"
+```
+
+```diff title="But we'll use our predicate function first"
+```
+
+```diff title="If the result is true, we'll call the reducing function"
+```
+
+```diff title="If not, we'll just return the accumulator"
+```
+
+```diff title="Effectively skipping the element"
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js title="Let's put it to use"
+
+import { isEven } from 'some-math-file'
+import { concat } from 'some-utils-file'
+
+const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+
+const isEvenTransducer = makeFilterTransducer(isEven)
+
+const reducingFn = isEvenTransducer(concat)
+
+[1,2,3,4].reduce(reducingFn, []) // [2,4]
+
+```
+
+```diff title="We're going to import our isEven and concat functions"
+```
+
+```diff title="We have our function to make filter transducers"
+```
+
+```diff title="We create a transducer to filter even numbers by partially applying isEven"
+```
+
+```diff title="We'll create our reducing function"
+```
+
+```diff title="And we can use it below!"
+```
+
+</CodeSurfer>
+
+---
+
+### So we've handled filter operations
+
+---
+
+#### But I promised something
+
+---
+
+<CodeSurfer>
+
+```js title="How can we accomplish this with transducers?"
+
+import { isEven, addOne } from 'some-math-file'
+
+[1,2,3,4]
+  .map(addOne)
+  .filter(isEven) // [2,4]
+
+```
+
+</CodeSurfer>
+
+---
+
+#### Composition!
+
+---
+
+<CodeSurfer>
+
+
+```js title="Wut."
+
+import { isEven, addOne } from 'some-math-file'
+import { concat } from 'some-utils-file'
+
+const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+const makeMapTransducer    = transformFn => reducingFn => (acc, val) => reducingFn(acc, transformFn(val))
+
+const isEvenTransducer = makeFilterTransducer(isEven)
+const addOneTransducer = makeMapTransducer(addOne)
+
+const addOneFilterEvenReducingFn = addOneTransducer(isEvenTransducer(concat))
+
+[1,2,3,4].reduce(addOneFilterEvenReducingFn, []) // [2,4]
+
+```
+
+```diff title="We have a way to create two different types of transducers"
+```
+
+```diff title="We can use them here"
+```
+
+```diff title="And because of composition, we can map first, then filter"
+```
+
+```diff title="Remember that transducers will execute left to right under composition"
+```
+
+```diff title="And we can use our reducing function below!"
+```
+
+```js title="You could optionally use a compose function"
+
+import { isEven, addOne } from 'some-math-file'
+import { concat, compose } from 'some-utils-file'
+
+const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+const makeMapTransducer    = transformFn => reducingFn => (acc, val) => reducingFn(acc, transformFn(val))
+
+const isEvenTransducer = makeFilterTransducer(isEven)
+const addOneTransducer = makeMapTransducer(addOne)
+
+const addOneFilterEvenTransducer = compose(addOneTransducer, isEvenTransducer)
+
+[1,2,3,4].reduce(addOneFilterEvenTransducer(concat), []) // [2,4]
+
+```
+
+```diff title="And we can use our transducer below with concat"
+```
+
+```diff title="And what does a transducer take as input? A reducing function"
+```
+
+```diff title="And what does a transducer return? A reducing function"
+```
+
+```diff title="And what does reduce take as it's first argument? A reducing function"
+```
+
+</CodeSurfer>
+
+---
+
+#### Real World Use Case
+
+---
+
+<CodeSurfer>
+
+```js title=""
+
+import { isPaid, pluckOrderNumber } from 'some-helpers-file'
+import { concat, compose } from 'some-utils-file'
+import { makeFilterTransducer, makeMapTransducer } from 'some-transducers-file'
+import { getOrders } from 'some-external-api'
+
+const isPaidTransducer = makeFilterTransducer(isPaid)
+const pluckOrderNumberTransducer = makeMapTransducer(pluckOrderNumber)
+
+const getPaidOrderNumbersTransducer = compose(isPaidTransducer, pluckOrderNumberTransducer)
+
+const orders = await getOrders() // [{ isPaid: true, orderNumber: 1234 }, { isPaid: false, orderNumber: 4567 }]
+
+const paidOrderNumbers = orders.reduce(getPaidOrderNumbersTransducer(concat), []) // [1234]
+
+```
+
+</CodeSurfer>
+
+---
+
+## And That's It!
+
+---
