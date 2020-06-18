@@ -26,13 +26,17 @@ export const theme = vsDark;
 ## A Review Of What We've Learned
 
 <div style={{ width: '80%', fontSize: '.75em'}}>
-  <li>Transducers are functions</li>
-  <li>Transducers take reducing functions and return NEW reducing functions</li>
-  <li>Transducers modify the input (usually the current value) to the reducing function</li>
-  <li>Transducers reduce unnecessary iteration</li>
-  <li>Transducers only need one intermediate array</li>
-  <li>Transducers compose with one another</li>
+  <li>Transducers are <strong style={{color: "#FEBE9C"}}>functions</strong></li>
+  <li>Transducers take <strong style={{color: "#FEBE9C"}}>reducing functions </strong>and return NEW <strong style={{color: "#FEBE9C"}}>reducing functions</strong></li>
+  <li>Transducers <strong style={{color: "#FEBE9C"}}>modify the input</strong> (usually the current value) to the <strong style={{color: "#FEBE9C"}}>reducing function</strong></li>
+  <li>Transducers reduce <strong style={{color: "#FEBE9C"}}>unnecessary iteration</strong></li>
+  <li>Transducers only need <strong style={{color: "#FEBE9C"}}>one intermediate array</strong></li>
+  <li>Transducers <strong style={{color: "#FEBE9C"}}>compose</strong> with one another (<strong style={{color: "#FEBE9C"}}>executing left to right</strong>)</li>
 </div>
+
+---
+
+#### Transducers In The Context Of Arrays
 
 ---
 
@@ -120,36 +124,36 @@ const reducingFn = keepEvenNumsTransducer(concat)
 
 ```
 
-```diff title="It will take a reducing function"
+```diff 4[32:42] title="It will take a reducing function"
 ```
 
-```diff title="And produce a NEW reducing function"
+```diff 4[46:99] title="And produce a NEW reducing function"
 ```
 
-```diff title="That will check to see if the current value is even"
+```diff 4[60:70] title="That will check to see if the current value is even"
 ```
 
-```diff title="If it is, we'll just pass the accumulator and current value to the reducing function"
+```diff 4[74:93] title="If it is, we'll just pass the accumulator and current value to the reducing function"
 ```
 
-```diff title="But if it isn't even, we'll just return the accumulator"
+```diff 4[97:99] title="But if it isn't even, we'll just return the accumulator"
 ```
 
-```diff title="Effectively removing the value"
+```diff 4[97:99] title="Effectively removing the value"
 ```
 
-```diff title="And so here we see we're keeping the even numbers"
+```diff 13 title="We only keep even numbers"
 ```
 
 </CodeSurfer>
 
 ---
 
-#### But what if we wanted to use any predicate function?
+#### But what if we wanted to use <strong style={{color: "#FEBE9C"}}>any</strong> predicate function?
 
 ---
 
-#### Like Array.filter
+#### Like <strong style={{color: "#FEBE9C"}}>Array.filter</strong>
 
 ---
 
@@ -190,28 +194,28 @@ const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicat
 ```diff title="It's a factory for transducers that will filter elements"
 ```
 
-```diff title="It will take a function like isEven, isOdd, etc."
+```diff 4[30:40] title="It will take a function like isEven, isOdd, etc."
 ```
 
-```diff title="That will produce a NEW transducer"
+```diff 4[45:117] title="That will produce a NEW transducer"
 ```
 
-```diff title="And like all transducers, it will accept a reducing function"
+```diff 4[45:54] title="And like all transducers, it will accept a reducing function"
 ```
 
-```diff title="And like all transducers, when called, it will create a NEW reducing function"
+```diff 4[59:117] title="And like all transducers, when called, it will create a NEW reducing function"
 ```
 
-```diff title="But we'll use our predicate function first"
+```diff 4[73:88] title="But we'll use our predicate function first"
 ```
 
-```diff title="If the result is true, we'll call the reducing function"
+```diff 4[92:111] title="If the result is true, we'll call the reducing function"
 ```
 
-```diff title="If not, we'll just return the accumulator"
+```diff 4[115:117] title="If not, we'll just return the accumulator"
 ```
 
-```diff title="Effectively skipping the element"
+```diff 4[115:117] title="Effectively skipping the element"
 ```
 
 </CodeSurfer>
@@ -235,19 +239,34 @@ const reducingFn = isEvenTransducer(concat)
 
 ```
 
-```diff title="We're going to import our isEven and concat functions"
+```diff 2,3 title="We're going to import our isEven and concat functions"
 ```
 
-```diff title="We have our function to make filter transducers"
+```diff 5 title="We have our function to make filter transducers"
 ```
 
-```diff title="We create a transducer to filter even numbers by partially applying isEven"
+```diff 7 title="We create a transducer to filter even numbers by partially applying isEven"
 ```
 
-```diff title="We'll create our reducing function"
+```diff 9 title="We'll create our reducing function"
 ```
 
-```diff title="And we can use it below!"
+```js title="Let's change the name of the reducing function"
+
+import { isEven } from 'some-math-file'
+import { concat } from 'some-utils-file'
+
+const makeFilterTransducer = predicateFn => reducingFn => (acc, val) => predicateFn(val) ? reducingFn(acc, val) : acc
+
+const isEvenTransducer = makeFilterTransducer(isEven)
+
+const filterEvensReducingFn = isEvenTransducer(concat)
+
+[1,2,3,4].reduce(filterEvensReducingFn, []) // [2,4]
+
+```
+
+```diff 11 title="And we can use it below!"
 ```
 
 </CodeSurfer>
@@ -302,19 +321,19 @@ const addOneFilterEvenReducingFn = addOneTransducer(isEvenTransducer(concat))
 
 ```
 
-```diff title="We have a way to create two different types of transducers"
+```diff 5,6 title="We have a way to create two different types of transducers"
 ```
 
-```diff title="We can use them here"
+```diff 8,9 title="We can use them here"
 ```
 
-```diff title="And because of composition, we can map first, then filter"
+```diff 11 title="And because of composition, we can map first, then filter"
 ```
 
-```diff title="Remember that transducers will execute left to right under composition"
+```diff 11 title="Remember that transducers will execute left to right under composition"
 ```
 
-```diff title="And we can use our reducing function below!"
+```diff 13 title="And we can use our reducing function below!"
 ```
 
 ```js title="You could optionally use a compose function"
@@ -334,18 +353,6 @@ const addOneFilterEvenTransducer = compose(addOneTransducer, isEvenTransducer)
 
 ```
 
-```diff title="And we can use our transducer below with concat"
-```
-
-```diff title="And what does a transducer take as input? A reducing function"
-```
-
-```diff title="And what does a transducer return? A reducing function"
-```
-
-```diff title="And what does reduce take as it's first argument? A reducing function"
-```
-
 </CodeSurfer>
 
 ---
@@ -356,7 +363,7 @@ const addOneFilterEvenTransducer = compose(addOneTransducer, isEvenTransducer)
 
 <CodeSurfer>
 
-```js title=""
+```js title="Kind of."
 
 import { isPaid, pluckOrderNumber } from 'some-helpers-file'
 import { concat, compose } from 'some-utils-file'
@@ -372,6 +379,21 @@ const orders = await getOrders() // [{ isPaid: true, orderNumber: 1234 }, { isPa
 
 const paidOrderNumbers = orders.reduce(getPaidOrderNumbersTransducer(concat), []) // [1234]
 
+```
+
+```diff 2,3,4,5 title="Some imports"
+```
+
+```diff 7,8 title="We'll create our filter and map transducers"
+```
+
+```diff 10 title="We'll compose those together"
+```
+
+```diff 12 title="We'll grab our orders. Note the structure."
+```
+
+```diff 14 title="And we'll use reduce to get the paid order numbers"
 ```
 
 </CodeSurfer>
