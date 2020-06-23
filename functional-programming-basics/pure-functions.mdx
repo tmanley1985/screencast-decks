@@ -17,21 +17,9 @@ export const theme = vsDark;
 <div style={{ maxWidth: "80%", fontSize: '.75em'}}>
   <ul>
     <li style={{marginBottom: '15px'}}>You have a basic understanding of javascript syntax, especially es6</li>
-    <li style={{marginBottom: '15px'}}>You've been following along</li>
+    <li>You've watched the Currying & Partial Application video</li>
     <li style={{marginBottom: '15px'}}>...and that's it</li>
   </ul>
-</div>
-
----
-
-## Why?
-
-
-<div style={{ width: '80%', fontSize: '.75em'}}>
-  <li>Easier to reason about</li>
-  <li>Consistency/Determinstic</li>
-  <li>Easier to test</li>
-  <li>Forces you to think about your dependencies</li>
 </div>
 
 ---
@@ -43,6 +31,55 @@ export const theme = vsDark;
 <li>Given the same  <span style={{color: "#FEBE9C"}}><strong>input</strong></span>, you get the same  <span style={{color: "#FEBE9C"}}><strong>output</strong></span></li>
 <li>The function should not produce <span style={{color: "#FEBE9C"}}><strong>side effects</strong></span></li>
 </ul>
+
+---
+
+## Why?
+
+
+<div style={{ width: '80%', fontSize: '.75em'}}>
+  <li>Easier to reason about</li>
+  <li>Consistency/Determinstic</li>
+  <li>Easier to test</li>
+  <li>Forces you to think about your dependencies</li>
+  <li>Pure functions are easy to memoize</li>
+</div>
+
+---
+
+<CodeSurfer>
+
+```js title="Same output for same input"
+
+const addOne = x => x + 1
+
+addOne(1) // 2
+addOne(1) // 2
+addOne(2) // 3
+addOne(2) // 3
+...
+
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```js title="If the domain is finite, you can use a lookup"
+
+  const lowerToUpper = {
+    a: 'A',
+    b: 'B',
+    ...
+  }
+
+  lowerToUpper['a'] // A
+  lowerToUpper['z'] // Z
+
+```
+</CodeSurfer>
 
 ---
 
@@ -74,13 +111,10 @@ getUpperCase('a') // A
 ```diff 4,5,6,7,8 title="There's a mapping between lowercase and uppercase letters"
 ```
 
-```diff 4,5,6,7,8 title="Because the domain is finite, we can precompute all the expected inputs/outputs"
+```diff 4,5,6,7,8 title="Why not just use the lookup?"
 ```
 
-```diff 4,5,6,7,8 title="This is trivial. If you have your inputs/outputs you can just use a lookup"
-```
-
-```diff 10,11 title="Unless you want to guard against bad input"
+```diff 10,11 title="You can. Unless you want to guard against bad input"
 ```
 
 ```diff 10,11 title="I like to read this is as follows:"
@@ -96,6 +130,9 @@ getUpperCase('a') // A
 ```
 
 ```diff 13 title="If the input is valid, return the uppercase letter from our mapping"
+```
+
+```diff 16 title="We can call this function with 'a' and get 'A' everytime"
 ```
 
 </CodeSurfer>
@@ -157,9 +194,9 @@ const addOne = () => a + 1
 
 addOne() // 4
 
-a = 4
+a = 9
 
-addOne() // 5
+addOne() // 10
 
 ```
 
@@ -256,7 +293,7 @@ const addOne = (x, logger) => ({
     logOutput: () => logger(x + 1)
 })
 
-const {output, logOutput} = addOne(1, console)
+const {output, logOutput} = addOne(1, console.log)
 output // 2
 logOutput() // logs 2 to the console
 
@@ -277,4 +314,4 @@ logOutput() // logs 2 to the console
 
 ---
 
-## And that's it!
+## And That's It!

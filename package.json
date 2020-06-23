@@ -2,7 +2,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "mdx-deck ./intro-to-reduce/transducers-part-2.mdx",
+    "start": "mdx-deck ./functional-programming-basics/pure-functions.mdx",
     "build": "mdx-deck build deck.mdx",
     "test": "echo \"there are no tests\""
   },
