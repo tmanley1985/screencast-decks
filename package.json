@@ -2,7 +2,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "mdx-deck ./functional-programming-basics/pure-functions.mdx",
+    "start": "mdx-deck $npm_config_path",
     "build": "mdx-deck build deck.mdx",
     "test": "echo \"there are no tests\""
   },
